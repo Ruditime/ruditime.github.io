@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اوقات شرعی | رودی تایم</title>
+    <meta name="description" content="اوقات شرعی دقیق برای شهرهای ایران با محاسبات نجومی و شمارش معکوس تا اذان بعدی.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23d4a745'/><text x='50' y='72' font-size='75' font-weight='bold' fill='white' font-family='Arial' text-anchor='middle'>R</text></svg>">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&family=Lalezar&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="stars-container" id="starsContainer"></div>
+    <div id="particlesContainer"></div>
+
+    <!-- نوار بالا -->
+    <div class="top-bar">
+        <div class="branding">
+            <span class="time-icon" id="timeIcon">☀️</span>
+            <h1 class="site-name" id="siteLogo" title="صفحه اصلی">رودی تایم</h1>
+            <button class="menu-toggle" id="menuToggle" aria-label="منو">☰</button>
+            <div class="nav-links" id="navLinks">
+                <a href="index.html" class="nav-link">🕐 تاریخ و ساعت</a>
+                <a href="calendar.html" class="nav-link">📅 تقویم</a>
+                <a href="convert.html" class="nav-link">🔄 تبدیل تاریخ</a>
+                <a href="prayer.html" class="nav-link">🕌 اوقات شرعی</a>
+                <a href="tools.html" class="nav-link">🧮 تبدیلات آنلاین</a>
+                <a href="contact.html" class="nav-link">📧 تماس با ما</a>
+            </div>
+        </div>
+        <div class="theme-toggle" id="themeToggle" title="تغییر تم روز/شب">🌙</div>
+    </div>
+
+    <!-- صفحه اوقات شرعی -->
+    <div class="prayer-page" id="prayerView">
+        <div class="prayer-card">
+            <div class="prayer-header">
+                <h3 id="prayerCityTitle">🕌 اوقات شرعی تهران</h3>
+                <div class="prayer-city-selector">
+                    <select id="citySelect" class="cal-select"></select>
+                </div>
+                <div class="prayer-date" id="prayerDate">---</div>
+            </div>
+            <div class="date-nav">
+                <button class="nav-btn" id="prayerPrevDay">◀ روز قبل</button>
+                <button class="nav-btn today-btn" id="prayerToday">📌 امروز</button>
+                <button class="nav-btn" id="prayerNextDay">روز بعد ▶</button>
+            </div>
+            <div class="next-prayer" id="nextPrayerBox">
+                <div class="next-prayer-label">⏳ تا اذان بعدی</div>
+                <div class="next-prayer-name" id="nextPrayerName">---</div>
+                <div class="next-prayer-time" id="nextPrayerCountdown">--:--:--</div>
+            </div>
+            <div class="prayer-times" id="prayerTimes">
+                <div class="prayer-row"><span>اذان صبح</span><span id="timeFajr">--:--</span></div>
+                <div class="prayer-row"><span>طلوع آفتاب</span><span id="timeSunrise">--:--</span></div>
+                <div class="prayer-row"><span>اذان ظهر</span><span id="timeNoon">--:--</span></div>
+                <div class="prayer-row"><span>اذان مغرب</span><span id="timeMaghrib">--:--</span></div>
+                <div class="prayer-row"><span>نیمه شب شرعی</span><span id="timeMidnight">--:--</span></div>
+            </div>
+            <button class="back-home-btn" onclick="location.href='index.html'">🏠 بازگشت به خانه</button>
+        </div>
+    </div>
+
+    <!-- فوتر -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h4>دسترسی سریع</h4>
+                <a href="index.html" class="footer-link">🕐 تاریخ و ساعت</a>
+                <a href="calendar.html" class="footer-link">📅 تقویم</a>
+                <a href="convert.html" class="footer-link">🔄 تبدیل تاریخ</a>
+                <a href="prayer.html" class="footer-link">🕌 اوقات شرعی</a>
+                <a href="tools.html" class="footer-link">🧮 تبدیلات آنلاین</a>
+            </div>
+            <div class="footer-column">
+                <h4>ابزارهای آنلاین</h4>
+                <a href="tools.html?tool=calculator" class="footer-link">🔢 ماشین حساب</a>
+                <a href="tools.html?tool=unit" class="footer-link">📏 تبدیل واحد</a>
+                <a href="tools.html?tool=bmi" class="footer-link">⚖️ BMI</a>
+                <a href="tools.html?tool=distance" class="footer-link">🌍 فاصله شهرها</a>
+                <a href="tools.html?tool=loan" class="footer-link">🏦 اقساط وام</a>
+                <a href="tools.html?tool=deposit" class="footer-link">💰 سود سپرده</a>
+                <a href="tools.html?tool=age" class="footer-link">🎂 سن دقیق</a>
+            </div>
+            <div class="footer-column">
+                <h4>ارتباط با ما</h4>
+                <a href="contact.html" class="footer-link">📧 تماس با ما</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            ساخته شده توسط <span class="credit">علی ابراهیمی</span> | تمامی حقوق محفوظ است © <span id="footerYear">1405</span>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
