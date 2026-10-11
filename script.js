@@ -63,7 +63,6 @@
         const backdrop = document.createElement('div');
         backdrop.className = 'menu-backdrop';
         document.body.appendChild(backdrop);
-
         const openMenu = () => {
             navLinks.classList.add('active');
             backdrop.classList.add('active');
@@ -105,6 +104,7 @@
     const hijriWeekdayNames = ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
     const miladiMonthNamesFa = ['ژانویه','فوریه','مارس','آوریل','مه','ژوئن','ژوئیه','اوت','سپتامبر','اکتبر','نوامبر','دسامبر'];
     const miladiWeekdayNamesFa = ['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'];
+    const zodiacSigns = ['حمل ♈ (فروردین)','ثور ♉ (اردیبهشت)','جوزا ♊ (خرداد)','سرطان ♋ (تیر)','اسد ♌ (مرداد)','سنبله ♍ (شهریور)','میزان ♎ (مهر)','عقرب ♏ (آبان)','قوس ♐ (آذر)','جدی ♑ (دی)','دلو ♒ (بهمن)','حوت ♓ (اسفند)'];
 
     function gregorianToJD(y, m, d) {
         let a = Math.floor((14 - m) / 12);
@@ -138,31 +138,17 @@
     }
     function gregorianToShamsi(gy, gm, gd) {
         const jd = gregorianToJD(gy, gm, gd);
-        const refJD = 2451625;
-        const refYear = 1379;
-        let days = jd - refJD;
-        let y = refYear;
+        const refJD = 2451625, refYear = 1379;
+        let days = jd - refJD, y = refYear;
         if (days >= 0) {
-            while (true) {
-                let yd = isShamsiLeap(y) ? 366 : 365;
-                if (days < yd) break;
-                days -= yd;
-                y++;
-            }
+            while (true) { let yd = isShamsiLeap(y) ? 366 : 365; if (days < yd) break; days -= yd; y++; }
         } else {
-            while (days < 0) {
-                y--;
-                days += isShamsiLeap(y) ? 366 : 365;
-            }
+            while (days < 0) { y--; days += isShamsiLeap(y) ? 366 : 365; }
         }
         const ml = [31,31,31,31,31,31,30,30,30,30,30,29];
         if (isShamsiLeap(y)) ml[11] = 30;
         let month = 0;
-        for (let i = 0; i < 12; i++) {
-            if (days < ml[i]) break;
-            days -= ml[i];
-            month++;
-        }
+        for (let i = 0; i < 12; i++) { if (days < ml[i]) break; days -= ml[i]; month++; }
         return { year: y, month: month + 1, day: days + 1, jd };
     }
     function shamsiToJD(sy, sm, sd) {
@@ -191,18 +177,13 @@
         for (let i = 0; i < 30; i++) {
             let yd = leapInCycle.includes(i + 1) ? 355 : 354;
             if (rem < yd) break;
-            rem -= yd;
-            yic++;
+            rem -= yd; yic++;
         }
         let hy = cycles * 30 + yic + 1;
         const ml = [30,29,30,29,30,29,30,29,30,29,30,29];
         if (leapInCycle.includes(yic + 1)) ml[11] = 30;
         let hm = 0;
-        for (let i = 0; i < 12; i++) {
-            if (rem < ml[i]) break;
-            rem -= ml[i];
-            hm++;
-        }
+        for (let i = 0; i < 12; i++) { if (rem < ml[i]) break; rem -= ml[i]; hm++; }
         return { year: hy, month: hm + 1, day: rem + 1 };
     }
     function hijriToJD(hy, hm, hd) {
@@ -234,134 +215,59 @@
 
     // ======================== بانک مناسبت‌ها ========================
     const fixedShamsiEvents = [
-        [1,1,'نوروز - آغاز سال نو',true],
-        [2,1,'عید نوروز',true],
-        [3,1,'عید نوروز',true],
-        [4,1,'عید نوروز',true],
-        [12,1,'روز جمهوری اسلامی ایران',true],
-        [13,1,'روز طبیعت',true],
-        [6,1,'زادروز زرتشت'],
-        [7,1,'روز هنرهای نمایشی'],
-        [10,1,'شهادت مدرس، روز مجلس'],
-        [15,1,'روز ذخایر ژنتیکی و زیستی'],
-        [18,1,'روز سلامتی'],
-        [20,1,'روز ملی فناوری هسته‌ای'],
-        [21,1,'شهادت امیر سپهبد علی صیاد شیرازی'],
-        [25,1,'روز بزرگداشت عطار نیشابوری'],
-        [27,1,'روز فرهنگ پهلوانی و ورزش زورخانه‌ای'],
-        [29,1,'روز ارتش جمهوری اسلامی ایران'],
-        [31,1,'روز گندم و نان'],
-        [1,2,'روز بزرگداشت سعدی'],
-        [2,2,'روز زمین، تأسیس سپاه'],
-        [3,2,'روز بزرگداشت شیخ بهایی'],
-        [5,2,'شکست حمله نظامی آمریکا در طبس'],
-        [7,2,'روز ایمنی حمل و نقل'],
-        [10,2,'روز ملی خلیج فارس'],
-        [11,2,'روز جهانی کارگر'],
-        [12,2,'شهادت مطهری، روز معلم'],
-        [13,2,'روز تجلیل از امامزادگان'],
-        [14,2,'روز بزرگداشت احمد بن موسی (ع)'],
-        [15,2,'روز بزرگداشت شیخ صدوق'],
-        [18,2,'روز بیماری‌های خاص'],
-        [19,2,'روز بزرگداشت شیخ کلینی'],
-        [24,2,'لغو امتیاز تنباکو'],
-        [25,2,'بزرگداشت فردوسی'],
-        [28,2,'بزرگداشت خیام، روز موزه'],
-        [30,2,'روز ملی جمعیت'],
-        [31,2,'روز اهدای عضو'],
-        [1,3,'روز بزرگداشت ملاصدرا'],
-        [3,3,'فتح خرمشهر'],
-        [4,3,'روز دزفول'],
-        [14,3,'رحلت امام خمینی (ره)',true],
-        [15,3,'قیام ۱۵ خرداد',true],
-        [20,3,'روز صنایع دستی و فرش'],
-        [27,3,'روز جهاد کشاورزی'],
-        [29,3,'درگذشت دکتر شریعتی'],
-        [31,3,'روز خانواده و تکریم بازنشستگان'],
-        [1,4,'روز تبلیغات اسلامی'],
-        [5,4,'روز تجلیل از اسرا'],
-        [6,4,'بزرگداشت محتشم کاشانی'],
-        [7,4,'روز قوه قضاییه'],
-        [10,4,'روز صنعت و معدن'],
-        [12,4,'روز افشای حقوق بشر آمریکایی'],
-        [14,4,'روز قلم'],
-        [18,4,'روز ادبیات کودکان'],
-        [21,4,'روز عفاف و حجاب'],
-        [22,4,'بزرگداشت خوارزمی'],
-        [25,4,'روز بهزیستی'],
-        [26,4,'تأسیس شورای نگهبان'],
-        [4,5,'بزرگداشت شیخ صفی‌الدین'],
-        [5,5,'عملیات مرصاد'],
-        [8,5,'بزرگداشت سهروردی'],
-        [9,5,'روز اهدای خون'],
-        [10,5,'روز سلمان فارسی'],
-        [14,5,'فرمان مشروطیت'],
-        [17,5,'روز خبرنگار'],
-        [18,5,'روز شهدای مدافع حرم'],
-        [21,5,'حمایت از صنایع کوچک'],
-        [22,5,'تشکل‌ها و مشارکت اجتماعی'],
-        [26,5,'آغاز بازگشت آزادگان'],
-        [28,5,'کودتای ۲۸ مرداد'],
-        [30,5,'روز جهانی مسجد'],
-        [1,6,'روز ابن سینا، روز پزشک'],
-        [2,6,'هفته دولت'],
-        [4,6,'روز کارمند'],
-        [5,6,'روز داروسازی'],
-        [8,6,'روز مبارزه با تروریسم'],
-        [11,6,'روز صنعت چاپ'],
-        [12,6,'روز مبارزه با استعمار'],
-        [13,6,'بزرگداشت ابوریحان بیرونی'],
-        [17,6,'قیام ۱۷ شهریور'],
-        [18,6,'روز وقف'],
-        [20,6,'روز سینما'],
-        [27,6,'روز شعر و ادب فارسی'],
-        [31,6,'آغاز هفته دفاع مقدس'],
-        [1,7,'بازگشایی مدارس'],
-        [4,7,'روز سرباز'],
-        [5,7,'روز گردشگری'],
-        [7,7,'روز آتش‌نشانی'],
-        [8,7,'بزرگداشت مولوی'],
-        [13,7,'روز نیروی انتظامی'],
-        [16,7,'روز جهانی کودک'],
-        [20,7,'بزرگداشت حافظ'],
-        [26,7,'روز تربیت بدنی'],
-        [1,8,'بزرگداشت بیهقی'],
-        [13,8,'روز دانش‌آموز'],
-        [14,8,'روز فرهنگ عمومی'],
-        [24,8,'روز کتاب و کتابخوانی'],
-        [5,9,'روز بسیج'],
-        [7,9,'روز نیروی دریایی'],
-        [9,9,'بزرگداشت شیخ مفید'],
-        [16,9,'روز دانشجو'],
-        [25,9,'روز پژوهش'],
-        [9,10,'روز بصیرت'],
-        [13,10,'شهادت سردار سلیمانی'],
-        [19,10,'قیام ۱۹ دی'],
-        [22,10,'بزرگداشت خواجه عبدالله انصاری'],
-        [1,11,'بزرگداشت حکیم صهبا'],
-        [12,11,'بازگشت امام خمینی'],
-        [22,11,'پیروزی انقلاب اسلامی',true],
-        [5,12,'بزرگداشت حضرت فاطمه (س)'],
-        [8,12,'روز امور تربیتی'],
-        [15,12,'روز درختکاری'],
-        [22,12,'روز بزرگداشت شهدا'],
-        [29,12,'ملی شدن صنعت نفت']
+        [1,1,'نوروز - آغاز سال نو',true],[2,1,'عید نوروز',true],[3,1,'عید نوروز',true],[4,1,'عید نوروز',true],
+        [12,1,'روز جمهوری اسلامی ایران',true],[13,1,'روز طبیعت',true],
+        [6,1,'زادروز زرتشت'],[7,1,'روز هنرهای نمایشی'],[10,1,'شهادت مدرس، روز مجلس'],
+        [15,1,'روز ذخایر ژنتیکی و زیستی'],[18,1,'روز سلامتی'],[20,1,'روز ملی فناوری هسته‌ای'],
+        [21,1,'شهادت امیر سپهبد علی صیاد شیرازی'],[25,1,'روز بزرگداشت عطار نیشابوری'],
+        [27,1,'روز فرهنگ پهلوانی و ورزش زورخانه‌ای'],[29,1,'روز ارتش جمهوری اسلامی ایران'],[31,1,'روز گندم و نان'],
+        [1,2,'روز بزرگداشت سعدی'],[2,2,'روز زمین، تأسیس سپاه'],[3,2,'روز بزرگداشت شیخ بهایی'],
+        [5,2,'شکست حمله نظامی آمریکا در طبس'],[7,2,'روز ایمنی حمل و نقل'],[10,2,'روز ملی خلیج فارس'],
+        [11,2,'روز جهانی کارگر'],[12,2,'شهادت مطهری، روز معلم'],[13,2,'روز تجلیل از امامزادگان'],
+        [14,2,'روز بزرگداشت احمد بن موسی (ع)'],[15,2,'روز بزرگداشت شیخ صدوق'],[18,2,'روز بیماری‌های خاص'],
+        [19,2,'روز بزرگداشت شیخ کلینی'],[24,2,'لغو امتیاز تنباکو'],[25,2,'بزرگداشت فردوسی'],
+        [28,2,'بزرگداشت خیام، روز موزه'],[30,2,'روز ملی جمعیت'],[31,2,'روز اهدای عضو'],
+        [1,3,'روز بزرگداشت ملاصدرا'],[3,3,'فتح خرمشهر'],[4,3,'روز دزفول'],
+        [14,3,'رحلت امام خمینی (ره)',true],[15,3,'قیام ۱۵ خرداد',true],[20,3,'روز صنایع دستی و فرش'],
+        [27,3,'روز جهاد کشاورزی'],[29,3,'درگذشت دکتر شریعتی'],[31,3,'روز خانواده و تکریم بازنشستگان'],
+        [1,4,'روز تبلیغات اسلامی'],[5,4,'روز تجلیل از اسرا'],[6,4,'بزرگداشت محتشم کاشانی'],
+        [7,4,'روز قوه قضاییه'],[10,4,'روز صنعت و معدن'],[12,4,'روز افشای حقوق بشر آمریکایی'],
+        [14,4,'روز قلم'],[18,4,'روز ادبیات کودکان'],[21,4,'روز عفاف و حجاب'],
+        [22,4,'بزرگداشت خوارزمی'],[25,4,'روز بهزیستی'],[26,4,'تأسیس شورای نگهبان'],
+        [4,5,'بزرگداشت شیخ صفی‌الدین'],[5,5,'عملیات مرصاد'],[8,5,'بزرگداشت سهروردی'],
+        [9,5,'روز اهدای خون'],[10,5,'روز سلمان فارسی'],[14,5,'فرمان مشروطیت'],
+        [17,5,'روز خبرنگار'],[18,5,'روز شهدای مدافع حرم'],[21,5,'حمایت از صنایع کوچک'],
+        [22,5,'تشکل‌ها و مشارکت اجتماعی'],[26,5,'آغاز بازگشت آزادگان'],[28,5,'کودتای ۲۸ مرداد'],[30,5,'روز جهانی مسجد'],
+        [1,6,'روز ابن سینا، روز پزشک'],[2,6,'هفته دولت'],[4,6,'روز کارمند'],[5,6,'روز داروسازی'],
+        [8,6,'روز مبارزه با تروریسم'],[11,6,'روز صنعت چاپ'],[12,6,'روز مبارزه با استعمار'],
+        [13,6,'بزرگداشت ابوریحان بیرونی'],[17,6,'قیام ۱۷ شهریور'],[18,6,'روز وقف'],
+        [20,6,'روز سینما'],[27,6,'روز شعر و ادب فارسی'],[31,6,'آغاز هفته دفاع مقدس'],
+        [1,7,'بازگشایی مدارس'],[4,7,'روز سرباز'],[5,7,'روز گردشگری'],[7,7,'روز آتش‌نشانی'],
+        [8,7,'بزرگداشت مولوی'],[13,7,'روز نیروی انتظامی'],[16,7,'روز جهانی کودک'],
+        [20,7,'بزرگداشت حافظ'],[26,7,'روز تربیت بدنی'],
+        [1,8,'بزرگداشت بیهقی'],[13,8,'روز دانش‌آموز'],[14,8,'روز فرهنگ عمومی'],[24,8,'روز کتاب و کتابخوانی'],
+        [5,9,'روز بسیج'],[7,9,'روز نیروی دریایی'],[9,9,'بزرگداشت شیخ مفید'],
+        [16,9,'روز دانشجو'],[25,9,'روز پژوهش'],
+        [9,10,'روز بصیرت'],[13,10,'شهادت سردار سلیمانی'],[19,10,'قیام ۱۹ دی'],[22,10,'بزرگداشت خواجه عبدالله انصاری'],
+        [1,11,'بزرگداشت حکیم صهبا'],[12,11,'بازگشت امام خمینی'],[22,11,'پیروزی انقلاب اسلامی',true],
+        [5,12,'بزرگداشت حضرت فاطمه (س)'],[8,12,'روز امور تربیتی'],[15,12,'روز درختکاری'],
+        [22,12,'روز بزرگداشت شهدا'],[29,12,'ملی شدن صنعت نفت']
     ];
 
     const islamicEvents = [
         { m: 1, d: 9, title: 'تاسوعا', holiday: true },
         { m: 1, d: 10, title: 'عاشورا', holiday: true },
-        { m: 1, d: 12, title: 'شهادت امام سجاد (ع)', holiday: false },
-        { m: 1, d: 25, title: 'شهادت امام سجاد (ع) به روایتی', holiday: false },
-        { m: 2, d: 7, title: 'شهادت امام حسن (ع) به روایتی', holiday: false },
+        { m: 1, d: 12, title: 'شهادت امام سجاد (ع)' },
+        { m: 1, d: 25, title: 'شهادت امام سجاد (ع) به روایتی' },
+        { m: 2, d: 7, title: 'شهادت امام حسن (ع) به روایتی' },
         { m: 2, d: 20, title: 'اربعین حسینی', holiday: true },
         { m: 2, d: 28, title: 'رحلت پیامبر (ص) و شهادت امام حسن (ع)', holiday: true },
         { m: 2, d: 30, title: 'شهادت امام رضا (ع)', holiday: true },
         { m: 3, d: 8, title: 'شهادت امام حسن عسکری (ع)', holiday: true },
-        { m: 3, d: 12, title: 'ولادت پیامبر (روایت اهل سنت)', holiday: false },
+        { m: 3, d: 12, title: 'ولادت پیامبر (روایت اهل سنت)' },
         { m: 3, d: 17, title: 'ولادت پیامبر (ص) و امام صادق (ع)', holiday: true },
-        { m: 4, d: 8, title: 'ولادت امام حسن عسکری (ع)', holiday: false },
-        { m: 4, d: 10, title: 'وفات حضرت معصومه (س)', holiday: false },
+        { m: 4, d: 8, title: 'ولادت امام حسن عسکری (ع)' },
+        { m: 4, d: 10, title: 'وفات حضرت معصومه (س)' },
         { m: 7, d: 13, title: 'ولادت امام علی (ع) و روز پدر', holiday: true },
         { m: 7, d: 27, title: 'مبعث رسول اکرم', holiday: true },
         { m: 8, d: 15, title: 'ولادت حضرت مهدی (عج)', holiday: true },
@@ -369,17 +275,17 @@
         { m: 10, d: 1, title: 'عید سعید فطر', holiday: true },
         { m: 10, d: 2, title: 'عید سعید فطر', holiday: true },
         { m: 10, d: 25, title: 'شهادت امام جعفر صادق (ع)', holiday: true },
-        { m: 11, d: 1, title: 'ولادت حضرت معصومه (س) و روز دختران', holiday: false },
-        { m: 11, d: 11, title: 'ولادت امام رضا (ع)', holiday: false },
-        { m: 11, d: 29, title: 'شهادت امام محمد تقی (ع)', holiday: false },
-        { m: 12, d: 1, title: 'ازدواج امام علی (ع) و حضرت فاطمه (س)', holiday: false },
-        { m: 12, d: 6, title: 'شهادت زائران خانه خدا', holiday: false },
-        { m: 12, d: 7, title: 'شهادت امام محمد باقر (ع)', holiday: false },
+        { m: 11, d: 1, title: 'ولادت حضرت معصومه (س) و روز دختران' },
+        { m: 11, d: 11, title: 'ولادت امام رضا (ع)' },
+        { m: 11, d: 29, title: 'شهادت امام محمد تقی (ع)' },
+        { m: 12, d: 1, title: 'ازدواج امام علی (ع) و حضرت فاطمه (س)' },
+        { m: 12, d: 6, title: 'شهادت زائران خانه خدا' },
+        { m: 12, d: 7, title: 'شهادت امام محمد باقر (ع)' },
         { m: 12, d: 10, title: 'عید سعید قربان', holiday: true },
-        { m: 12, d: 15, title: 'ولادت امام هادی (ع)', holiday: false },
+        { m: 12, d: 15, title: 'ولادت امام هادی (ع)' },
         { m: 12, d: 18, title: 'عید غدیر خم', holiday: true },
-        { m: 12, d: 20, title: 'ولادت امام موسی کاظم (ع)', holiday: false },
-        { m: 12, d: 24, title: 'روز مباهله', holiday: false }
+        { m: 12, d: 20, title: 'ولادت امام موسی کاظم (ع)' },
+        { m: 12, d: 24, title: 'روز مباهله' }
     ];
 
     function getOccasionForYear(shYear) {
@@ -408,6 +314,114 @@
         return db;
     }
 
+    // ======================== بانک شهرها ========================
+    const cities = [
+        { name: 'تهران', lat: 35.6892, lon: 51.3890 },
+        { name: 'کرج', lat: 35.8400, lon: 50.9391 },
+        { name: 'مشهد', lat: 36.2605, lon: 59.6168 },
+        { name: 'اصفهان', lat: 32.6546, lon: 51.6680 },
+        { name: 'شیراز', lat: 29.5918, lon: 52.5837 },
+        { name: 'تبریز', lat: 38.0667, lon: 46.3000 },
+        { name: 'قم', lat: 34.6416, lon: 50.8746 },
+        { name: 'اهواز', lat: 31.3183, lon: 48.6706 },
+        { name: 'کرمانشاه', lat: 34.3142, lon: 47.0650 },
+        { name: 'ارومیه', lat: 37.5527, lon: 45.0760 },
+        { name: 'رشت', lat: 37.2808, lon: 49.5832 },
+        { name: 'زاهدان', lat: 29.4963, lon: 60.8629 },
+        { name: 'کرمان', lat: 30.2839, lon: 57.0834 },
+        { name: 'بندرعباس', lat: 27.1865, lon: 56.2808 },
+        { name: 'همدان', lat: 34.7983, lon: 48.5148 },
+        { name: 'اراک', lat: 34.0954, lon: 49.7013 },
+        { name: 'یزد', lat: 31.8974, lon: 54.3569 },
+        { name: 'اردبیل', lat: 38.2498, lon: 48.2933 },
+        { name: 'زنجان', lat: 36.6831, lon: 48.5087 },
+        { name: 'قزوین', lat: 36.2688, lon: 50.0041 },
+        { name: 'سنندج', lat: 35.3119, lon: 46.9964 },
+        { name: 'خرم‌آباد', lat: 33.4878, lon: 48.3558 },
+        { name: 'بوشهر', lat: 28.9684, lon: 50.8385 },
+        { name: 'ایلام', lat: 33.6374, lon: 46.4227 },
+        { name: 'بیرجند', lat: 32.8649, lon: 59.2211 },
+        { name: 'بجنورد', lat: 37.4750, lon: 57.3333 },
+        { name: 'ساری', lat: 36.5659, lon: 53.0586 },
+        { name: 'گرگان', lat: 36.8387, lon: 54.4347 },
+        { name: 'سمنان', lat: 35.5769, lon: 53.3950 },
+        { name: 'شهرکرد', lat: 32.3256, lon: 50.8644 },
+        { name: 'یاسوج', lat: 30.6684, lon: 51.5875 },
+        { name: 'کاشان', lat: 33.9833, lon: 51.4333 },
+        { name: 'نجف‌آباد', lat: 32.6347, lon: 51.3667 },
+        { name: 'نیشابور', lat: 36.2133, lon: 58.7958 },
+        { name: 'سبزوار', lat: 36.2128, lon: 57.6814 },
+        { name: 'بابل', lat: 36.5510, lon: 52.6789 },
+        { name: 'آمل', lat: 36.4697, lon: 52.3507 },
+        { name: 'قائم‌شهر', lat: 36.4633, lon: 52.8600 },
+        { name: 'بهشهر', lat: 36.6922, lon: 53.5539 },
+        { name: 'چالوس', lat: 36.6500, lon: 51.4167 },
+        { name: 'نوشهر', lat: 36.6500, lon: 51.5000 },
+        { name: 'رامسر', lat: 36.9167, lon: 50.6500 },
+        { name: 'لاهیجان', lat: 37.2022, lon: 50.0033 },
+        { name: 'انزلی', lat: 37.4728, lon: 49.4622 },
+        { name: 'آستارا', lat: 38.4303, lon: 48.8744 },
+        { name: 'فومن', lat: 37.2236, lon: 49.3125 },
+        { name: 'مراغه', lat: 37.3892, lon: 46.2397 },
+        { name: 'مرند', lat: 38.4300, lon: 45.7700 },
+        { name: 'خوی', lat: 38.5503, lon: 44.9521 },
+        { name: 'میانه', lat: 37.4239, lon: 47.7117 },
+        { name: 'اهر', lat: 38.4753, lon: 47.0697 },
+        { name: 'پارس‌آباد', lat: 39.6489, lon: 47.9172 },
+        { name: 'خلخال', lat: 37.6189, lon: 48.5300 },
+        { name: 'مهاباد', lat: 36.7631, lon: 45.7222 },
+        { name: 'سقز', lat: 36.2400, lon: 46.2672 },
+        { name: 'بوکان', lat: 36.5200, lon: 46.2089 },
+        { name: 'پیرانشهر', lat: 36.6939, lon: 45.1444 },
+        { name: 'ماکو', lat: 39.2947, lon: 44.5186 },
+        { name: 'سلماس', lat: 38.1967, lon: 44.7678 },
+        { name: 'مشکین‌شهر', lat: 38.3914, lon: 47.6778 },
+        { name: 'دزفول', lat: 32.3825, lon: 48.4020 },
+        { name: 'آبادان', lat: 30.3473, lon: 48.2934 },
+        { name: 'خرمشهر', lat: 30.4408, lon: 48.1833 },
+        { name: 'بهبهان', lat: 30.5961, lon: 50.2417 },
+        { name: 'شوشتر', lat: 32.0456, lon: 48.8567 },
+        { name: 'مسجد سلیمان', lat: 31.9364, lon: 49.3039 },
+        { name: 'گنبد کاووس', lat: 37.2500, lon: 55.1672 },
+        { name: 'چابهار', lat: 25.2919, lon: 60.6430 },
+        { name: 'زابل', lat: 31.0281, lon: 61.4964 },
+        { name: 'ایرانشهر', lat: 27.2025, lon: 60.6844 },
+        { name: 'سراوان', lat: 27.3708, lon: 62.3344 },
+        { name: 'کیش', lat: 26.5333, lon: 53.9667 },
+        { name: 'قشم', lat: 26.9519, lon: 56.2706 },
+        { name: 'بندر لنگه', lat: 26.5581, lon: 54.8808 },
+        { name: 'میناب', lat: 27.1461, lon: 57.0833 },
+        { name: 'جهرم', lat: 28.5000, lon: 53.5606 },
+        { name: 'لار', lat: 27.6833, lon: 54.3400 },
+        { name: 'کازرون', lat: 29.6167, lon: 51.6500 },
+        { name: 'مرودشت', lat: 29.8667, lon: 52.8000 },
+        { name: 'فسا', lat: 28.9403, lon: 53.6483 },
+        { name: 'داراب', lat: 28.7519, lon: 54.5486 },
+        { name: 'آباده', lat: 31.1608, lon: 52.6503 },
+        { name: 'ساوه', lat: 35.0213, lon: 50.3562 },
+        { name: 'خمین', lat: 33.6389, lon: 50.0792 },
+        { name: 'محلات', lat: 33.9114, lon: 50.4536 },
+        { name: 'دلیجان', lat: 33.9886, lon: 50.6811 },
+        { name: 'ورامین', lat: 35.3242, lon: 51.6458 },
+        { name: 'پاکدشت', lat: 35.4728, lon: 51.6811 },
+        { name: 'شهریار', lat: 35.6594, lon: 51.0206 },
+        { name: 'اسلامشهر', lat: 35.5564, lon: 51.2350 },
+        { name: 'رباط‌کریم', lat: 35.4667, lon: 51.0833 },
+        { name: 'شهر قدس', lat: 35.7089, lon: 51.1142 },
+        { name: 'اندیمشک', lat: 32.4500, lon: 48.3500 },
+        { name: 'شوش', lat: 32.1944, lon: 48.2639 },
+        { name: 'بم', lat: 29.1061, lon: 58.3569 },
+        { name: 'رفسنجان', lat: 30.4067, lon: 55.9939 },
+        { name: 'سیرجان', lat: 29.4514, lon: 55.6719 },
+        { name: 'جیرفت', lat: 28.6739, lon: 57.7367 },
+        { name: 'بافت', lat: 29.2331, lon: 56.6017 },
+        { name: 'تربت حیدریه', lat: 35.2742, lon: 59.2194 },
+        { name: 'تربت جام', lat: 35.2444, lon: 60.6061 },
+        { name: 'قوچان', lat: 37.1067, lon: 58.5094 },
+        { name: 'کاشمر', lat: 35.2406, lon: 58.4656 },
+        { name: 'گناباد', lat: 34.3525, lon: 58.6839 }
+    ];
+
     // ======================== آیکون زمان ========================
     function updateTimeIcon() {
         const icon = document.getElementById('timeIcon');
@@ -424,9 +438,7 @@
         icon.textContent = emoji;
     }
     function estimateSunTimes(dayOfYear) {
-        const sunriseBase = 6.2;
-        const sunsetBase = 18.2;
-        const amplitude = 1.2;
+        const sunriseBase = 6.2, sunsetBase = 18.2, amplitude = 1.2;
         const dayRad = (dayOfYear - 80) * (2 * Math.PI / 365);
         return { sunrise: sunriseBase - amplitude * Math.sin(dayRad), sunset: sunsetBase + amplitude * Math.sin(dayRad) };
     }
@@ -445,7 +457,77 @@
         }
         setInterval(updateClock, 1000);
         updateClock();
+
         let currentOffset = 0;
+
+        function setInfoValue(id, days, unit) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (days < 0) days = 0;
+            if (days === 0) el.textContent = 'امروز';
+            else if (days === 1) el.textContent = '۱ ' + unit;
+            else el.textContent = `${days} ${unit}`;
+        }
+
+        function updateInfoCard() {
+            const iran = getIranDateTime();
+            const todayJD = gregorianToJD(iran.year, iran.month, iran.day);
+            const sh = gregorianToShamsi(iran.year, iran.month, iran.day);
+            const hi = gregorianToHijri(iran.year, iran.month, iran.day);
+
+            const shamsiLastDay = isShamsiLeap(sh.year) ? 30 : 29;
+            const shamsiEnd = shamsiToJD(sh.year, 12, shamsiLastDay);
+            setInfoValue('daysToShamsiEnd', shamsiEnd - todayJD, 'روز');
+
+            const nowruz = shamsiToJD(sh.year + 1, 1, 1);
+            setInfoValue('daysToNowruz', nowruz - todayJD, 'روز');
+
+            let yalda = shamsiToJD(sh.year, 9, 30);
+            let daysToYalda = yalda - todayJD;
+            if (daysToYalda < 0) {
+                yalda = shamsiToJD(sh.year + 1, 9, 30);
+                daysToYalda = yalda - todayJD;
+            }
+            setInfoValue('daysToYalda', daysToYalda, 'روز');
+
+            const zodiacEl = document.getElementById('zodiacSign');
+            if (zodiacEl) zodiacEl.textContent = zodiacSigns[sh.month - 1];
+
+            const miladiEnd = gregorianToJD(iran.year, 12, 31);
+            setInfoValue('daysToMiladiEnd', miladiEnd - todayJD, 'روز');
+
+            const hijriLastMonthDays = leapInCycle.includes(((hi.year - 1) % 30) + 1) ? 30 : 29;
+            let hijriEnd = hijriToJD(hi.year, 12, hijriLastMonthDays);
+            let daysToHijriEnd = hijriEnd - todayJD;
+            if (daysToHijriEnd < 0) {
+                const nextHijriYear = hi.year + 1;
+                const nextLastMonthDays = leapInCycle.includes(((nextHijriYear - 1) % 30) + 1) ? 30 : 29;
+                hijriEnd = hijriToJD(nextHijriYear, 12, nextLastMonthDays);
+                daysToHijriEnd = hijriEnd - todayJD;
+            }
+            setInfoValue('daysToHijriEnd', daysToHijriEnd, 'روز');
+
+            const db = getOccasionForYear(sh.year);
+            const dbNext = getOccasionForYear(sh.year + 1);
+            let nearest = null;
+            for (let offset = 1; offset < 365; offset++) {
+                const jd = todayJD + offset;
+                const g = jdToGregorian(jd);
+                const s = gregorianToShamsi(g.year, g.month, g.day);
+                const key = `${s.day}/${s.month}`;
+                const currentDB = s.year === sh.year ? db : dbNext;
+                if (currentDB[key] && currentDB[key].events.length > 0) {
+                    nearest = { name: currentDB[key].events[0], days: offset };
+                    break;
+                }
+            }
+            const occEl = document.getElementById('nextOccasion');
+            if (occEl) {
+                if (nearest) occEl.textContent = `${nearest.name} — ${nearest.days} روز دیگر`;
+                else occEl.textContent = '—';
+            }
+        }
+
         function updateAllDisplays() {
             const iran = getIranDateTime();
             const targetJD = gregorianToJD(iran.year, iran.month, iran.day) + currentOffset;
@@ -479,7 +561,9 @@
             document.getElementById('miladiWeekday').textContent = miladiWeekdayNamesFa[getDayOfWeek(targetJD)];
             document.getElementById('footerYear').textContent = sh.year;
             document.getElementById('todayBtn').textContent = currentOffset !== 0 ? '📌 برگشت به امروز' : '📌 امروز';
+            updateInfoCard();
         }
+
         document.getElementById('prevDayBtn').addEventListener('click', () => { currentOffset--; updateAllDisplays(); });
         document.getElementById('nextDayBtn').addEventListener('click', () => { currentOffset++; updateAllDisplays(); });
         document.getElementById('todayBtn').addEventListener('click', () => { currentOffset = 0; updateAllDisplays(); });
@@ -597,9 +681,12 @@
             else { jd = gregorianToJD(year, month, day); gDate = {year, month, day}; }
             const sh = gregorianToShamsi(gDate.year, gDate.month, gDate.day);
             const hi = gregorianToHijri(gDate.year, gDate.month, gDate.day);
-            document.getElementById('resShamsi').textContent = `${sh.day} ${shamsiMonthNames[sh.month-1]} ${sh.year}`;
-            document.getElementById('resHijri').textContent = `${hi.day} ${hijriMonthNames[hi.month-1]} ${hi.year} هـ.ق`;
-            document.getElementById('resMiladi').textContent = `${gDate.day} ${miladiMonthNamesFa[gDate.month-1]} ${gDate.year} م`;
+            const dowSh = shamsiWeekdayNames[getShamsiWeekday(jd)];
+            const dowHi = hijriWeekdayNames[getDayOfWeek(jd)];
+            const dowMil = miladiWeekdayNamesFa[getDayOfWeek(jd)];
+            document.getElementById('resShamsi').textContent = `${dowSh}، ${sh.day} ${shamsiMonthNames[sh.month-1]} ${sh.year}`;
+            document.getElementById('resHijri').textContent = `${dowHi}، ${hi.day} ${hijriMonthNames[hi.month-1]} ${hi.year} هـ.ق`;
+            document.getElementById('resMiladi').textContent = `${dowMil}، ${gDate.day} ${miladiMonthNamesFa[gDate.month-1]} ${gDate.year} م`;
         }
         sourceCalendar.addEventListener('change', () => { populateMonthDropdown(); performConversion(); });
         inputMonth.addEventListener('change', () => { populateDayDropdown(); performConversion(); });
@@ -612,55 +699,10 @@
 
     // ======================== صفحه اوقات شرعی ========================
     if (document.getElementById('prayerView')) {
-        const cities = [
-            { name: 'تهران', lat: 35.6892, lon: 51.3890 },
-            { name: 'کرج', lat: 35.8400, lon: 50.9391 },
-            { name: 'قم', lat: 34.6416, lon: 50.8746 },
-            { name: 'اصفهان', lat: 32.6546, lon: 51.6680 },
-            { name: 'مشهد', lat: 36.2605, lon: 59.6168 },
-            { name: 'شیراز', lat: 29.5918, lon: 52.5837 },
-            { name: 'تبریز', lat: 38.0667, lon: 46.3000 },
-            { name: 'اهواز', lat: 31.3183, lon: 48.6706 },
-            { name: 'کرمانشاه', lat: 34.3142, lon: 47.0650 },
-            { name: 'ارومیه', lat: 37.5527, lon: 45.0760 },
-            { name: 'رشت', lat: 37.2808, lon: 49.5832 },
-            { name: 'زاهدان', lat: 29.4963, lon: 60.8629 },
-            { name: 'کرمان', lat: 30.2839, lon: 57.0834 },
-            { name: 'بندرعباس', lat: 27.1865, lon: 56.2808 },
-            { name: 'همدان', lat: 34.7983, lon: 48.5148 },
-            { name: 'اراک', lat: 34.0954, lon: 49.7013 },
-            { name: 'یزد', lat: 31.8974, lon: 54.3569 },
-            { name: 'اردبیل', lat: 38.2498, lon: 48.2933 },
-            { name: 'زنجان', lat: 36.6831, lon: 48.5087 },
-            { name: 'قزوین', lat: 36.2688, lon: 50.0041 },
-            { name: 'سنندج', lat: 35.3119, lon: 46.9964 },
-            { name: 'خرم‌آباد', lat: 33.4878, lon: 48.3558 },
-            { name: 'بوشهر', lat: 28.9684, lon: 50.8385 },
-            { name: 'ایلام', lat: 33.6374, lon: 46.4227 },
-            { name: 'بیرجند', lat: 32.8649, lon: 59.2211 },
-            { name: 'بجنورد', lat: 37.4750, lon: 57.3333 },
-            { name: 'ساری', lat: 36.5659, lon: 53.0586 },
-            { name: 'گرگان', lat: 36.8387, lon: 54.4347 },
-            { name: 'سمنان', lat: 35.5769, lon: 53.3950 },
-            { name: 'شهرکرد', lat: 32.3256, lon: 50.8644 },
-            { name: 'یاسوج', lat: 30.6684, lon: 51.5875 },
-            { name: 'کاشان', lat: 33.9833, lon: 51.4333 },
-            { name: 'نجف‌آباد', lat: 32.6347, lon: 51.3667 },
-            { name: 'نیشابور', lat: 36.2133, lon: 58.7958 },
-            { name: 'سبزوار', lat: 36.2128, lon: 57.6814 },
-            { name: 'بابل', lat: 36.5510, lon: 52.6789 },
-            { name: 'آمل', lat: 36.4697, lon: 52.3507 },
-            { name: 'مراغه', lat: 37.3892, lon: 46.2397 },
-            { name: 'خوی', lat: 38.5503, lon: 44.9521 },
-            { name: 'دزفول', lat: 32.3825, lon: 48.4020 },
-            { name: 'آبادان', lat: 30.3473, lon: 48.2934 },
-            { name: 'گنبد کاووس', lat: 37.2500, lon: 55.1672 },
-            { name: 'چابهار', lat: 25.2919, lon: 60.6430 },
-            { name: 'کیش', lat: 26.5333, lon: 53.9667 }
-        ];
         let currentCity = cities[0];
         function populateCitySelect() {
             const select = document.getElementById('citySelect');
+            select.innerHTML = '';
             cities.forEach(city => {
                 const opt = document.createElement('option');
                 opt.value = city.name;
@@ -801,80 +843,45 @@
             });
         });
 
-        // ======================== ماشین حساب پیشرفته ========================
+        // ماشین حساب
         let calcExpression = '';
         const calcDisplay = document.getElementById('calcDisplay');
         function updateCalcDisplay() { calcDisplay.textContent = calcExpression || '0'; }
-
         const MathFuncs = {
             sin: d => Math.sin(d * Math.PI / 180),
             cos: d => Math.cos(d * Math.PI / 180),
             tan: d => Math.tan(d * Math.PI / 180),
-            log: Math.log10,
-            ln: Math.log,
-            sqrt: Math.sqrt,
+            log: Math.log10, ln: Math.log, sqrt: Math.sqrt,
             factorial: function factorial(n) {
                 if (n < 0 || !Number.isInteger(n)) return NaN;
                 if (n > 170) return Infinity;
-                let f = 1;
-                for (let i = 2; i <= n; i++) f *= i;
+                let f = 1; for (let i = 2; i <= n; i++) f *= i;
                 return f;
             },
-            PI: Math.PI,
-            E: Math.E
+            PI: Math.PI, E: Math.E
         };
-
         function evaluateCalc() {
             try {
                 let expr = calcExpression;
                 if (!expr.trim()) return;
-
-                // بستن خودکار پرانتزهای باز
                 const openCount = (expr.match(/\(/g) || []).length;
                 const closeCount = (expr.match(/\)/g) || []).length;
                 for (let i = 0; i < openCount - closeCount; i++) expr += ')';
-
-                // تبدیل نمادها به معادل جاوااسکریپت
                 expr = expr.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
                 expr = expr.replace(/π/g, 'PI');
                 expr = expr.replace(/(?<![a-zA-Z])e(?![a-zA-Z])/g, 'E');
                 expr = expr.replace(/√/g, 'sqrt');
                 expr = expr.replace(/\^/g, '**');
                 expr = expr.replace(/(\d+(?:\.\d+)?)!/g, 'factorial($1)');
-
-                const func = new Function(
-                    'sin', 'cos', 'tan', 'log', 'ln', 'sqrt', 'factorial', 'PI', 'E',
-                    'return (' + expr + ')'
-                );
-                const result = func(
-                    MathFuncs.sin, MathFuncs.cos, MathFuncs.tan,
-                    MathFuncs.log, MathFuncs.ln, MathFuncs.sqrt,
-                    MathFuncs.factorial, MathFuncs.PI, MathFuncs.E
-                );
-
-                if (typeof result !== 'number' || !isFinite(result)) {
-                    calcDisplay.textContent = 'خطا';
-                    calcExpression = '';
-                    return;
-                }
-
+                const func = new Function('sin','cos','tan','log','ln','sqrt','factorial','PI','E', 'return (' + expr + ')');
+                const result = func(MathFuncs.sin, MathFuncs.cos, MathFuncs.tan, MathFuncs.log, MathFuncs.ln, MathFuncs.sqrt, MathFuncs.factorial, MathFuncs.PI, MathFuncs.E);
+                if (typeof result !== 'number' || !isFinite(result)) { calcDisplay.textContent = 'خطا'; calcExpression = ''; return; }
                 let finalResult = Math.abs(result) < 1e-10 ? 0 : result;
-
-                let displayValue;
-                if (Number.isInteger(finalResult)) {
-                    displayValue = String(finalResult);
-                } else {
-                    displayValue = String(parseFloat(finalResult.toFixed(10)));
-                }
-
+                let displayValue = Number.isInteger(finalResult) ? String(finalResult) : String(parseFloat(finalResult.toFixed(10)));
                 calcDisplay.textContent = displayValue;
                 calcExpression = displayValue;
-            } catch (err) {
-                calcDisplay.textContent = 'خطا';
-                calcExpression = '';
-            }
+            } catch { calcDisplay.textContent = 'خطا'; calcExpression = ''; }
         }
-
         document.querySelectorAll('.calc-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const action = btn.dataset.action;
@@ -903,7 +910,6 @@
                 updateCalcDisplay();
             });
         });
-
         window.addEventListener('keydown', (e) => {
             const calcPanel = document.getElementById('panel-calculator');
             if (!calcPanel || !calcPanel.classList.contains('active')) return;
@@ -924,7 +930,7 @@
             updateCalcDisplay();
         });
 
-        // ======================== تبدیل واحد ========================
+        // تبدیل واحد
         const unitCategories = {
             length: { label: 'طول (Length)', units: {
                 meter:{name:'متر (Meter)', factor:1}, kilometer:{name:'کیلومتر (Kilometer)', factor:1000}, centimeter:{name:'سانتی‌متر (Centimeter)', factor:0.01}, millimeter:{name:'میلی‌متر (Millimeter)', factor:0.001}, micrometer:{name:'میکرومتر (Micrometer)', factor:0.000001}, nanometer:{name:'نانومتر (Nanometer)', factor:0.000000001}, mile:{name:'مایل (Mile)', factor:1609.344}, yard:{name:'یارد (Yard)', factor:0.9144}, foot:{name:'فوت (Foot)', factor:0.3048}, inch:{name:'اینچ (Inch)', factor:0.0254}, nauticalmile:{name:'مایل دریایی (Nautical Mile)', factor:1852}
@@ -1012,11 +1018,8 @@
                 else if (from==='kelvin'&&to==='celsius') result = value-273.15;
                 else if (from==='kelvin'&&to==='fahrenheit') result = (value-273.15)*9/5+32;
                 else result = value;
-            } else if (cat === 'fuel') {
-                result = convertFuel(from, to, value);
-            } else {
-                result = value * unitCategories[cat].units[from].factor / unitCategories[cat].units[to].factor;
-            }
+            } else if (cat === 'fuel') { result = convertFuel(from, to, value); }
+            else { result = value * unitCategories[cat].units[from].factor / unitCategories[cat].units[to].factor; }
             unitResult.textContent = `${value} ${unitCategories[cat].units[from].name} = ${result.toFixed(6)} ${unitCategories[cat].units[to].name}`;
         }
         unitCategory.addEventListener('change', populateUnitSelects);
@@ -1025,204 +1028,123 @@
         unitInput.addEventListener('input', convertUnit);
         populateUnitCategories();
 
-        // ======================== BMI ========================
+        // BMI
         document.getElementById('bmiCalcBtn').addEventListener('click', () => {
             const w = parseFloat(document.getElementById('bmiWeight').value);
             const h = parseFloat(document.getElementById('bmiHeight').value)/100;
-            if (!w || !h) {
-                document.getElementById('bmiResult').textContent = 'لطفاً وزن و قد را وارد کنید';
-                return;
-            }
+            if (!w || !h) { document.getElementById('bmiResult').textContent = 'لطفاً وزن و قد را وارد کنید'; return; }
             const bmi = w/(h*h);
             let cat = bmi<18.5?'کمبود وزن':bmi<25?'نرمال':bmi<30?'اضافه وزن':'چاقی';
             document.getElementById('bmiResult').textContent = `BMI: ${bmi.toFixed(1)} (${cat})`;
         });
 
-        // ======================== فاصله استان‌ها ========================
-        const provinces = [
-            { name: 'آذربایجان شرقی', capital: 'تبریز', lat: 38.0667, lon: 46.3000 },
-            { name: 'آذربایجان غربی', capital: 'ارومیه', lat: 37.5527, lon: 45.0760 },
-            { name: 'اردبیل', capital: 'اردبیل', lat: 38.2498, lon: 48.2933 },
-            { name: 'اصفهان', capital: 'اصفهان', lat: 32.6546, lon: 51.6680 },
-            { name: 'البرز', capital: 'کرج', lat: 35.8400, lon: 50.9391 },
-            { name: 'ایلام', capital: 'ایلام', lat: 33.6374, lon: 46.4227 },
-            { name: 'بوشهر', capital: 'بوشهر', lat: 28.9684, lon: 50.8385 },
-            { name: 'تهران', capital: 'تهران', lat: 35.6892, lon: 51.3890 },
-            { name: 'چهارمحال و بختیاری', capital: 'شهرکرد', lat: 32.3256, lon: 50.8644 },
-            { name: 'خراسان جنوبی', capital: 'بیرجند', lat: 32.8649, lon: 59.2211 },
-            { name: 'خراسان رضوی', capital: 'مشهد', lat: 36.2605, lon: 59.6168 },
-            { name: 'خراسان شمالی', capital: 'بجنورد', lat: 37.4750, lon: 57.3333 },
-            { name: 'خوزستان', capital: 'اهواز', lat: 31.3183, lon: 48.6706 },
-            { name: 'زنجان', capital: 'زنجان', lat: 36.6831, lon: 48.5087 },
-            { name: 'سمنان', capital: 'سمنان', lat: 35.5769, lon: 53.3950 },
-            { name: 'سیستان و بلوچستان', capital: 'زاهدان', lat: 29.4963, lon: 60.8629 },
-            { name: 'فارس', capital: 'شیراز', lat: 29.5918, lon: 52.5837 },
-            { name: 'قزوین', capital: 'قزوین', lat: 36.2688, lon: 50.0041 },
-            { name: 'قم', capital: 'قم', lat: 34.6416, lon: 50.8746 },
-            { name: 'کردستان', capital: 'سنندج', lat: 35.3119, lon: 46.9964 },
-            { name: 'کرمان', capital: 'کرمان', lat: 30.2839, lon: 57.0834 },
-            { name: 'کرمانشاه', capital: 'کرمانشاه', lat: 34.3142, lon: 47.0650 },
-            { name: 'کهگیلویه و بویراحمد', capital: 'یاسوج', lat: 30.6684, lon: 51.5875 },
-            { name: 'گلستان', capital: 'گرگان', lat: 36.8387, lon: 54.4347 },
-            { name: 'گیلان', capital: 'رشت', lat: 37.2808, lon: 49.5832 },
-            { name: 'لرستان', capital: 'خرم‌آباد', lat: 33.4878, lon: 48.3558 },
-            { name: 'مازندران', capital: 'ساری', lat: 36.5659, lon: 53.0586 },
-            { name: 'مرکزی', capital: 'اراک', lat: 34.0954, lon: 49.7013 },
-            { name: 'هرمزگان', capital: 'بندرعباس', lat: 27.1865, lon: 56.2808 },
-            { name: 'همدان', capital: 'همدان', lat: 34.7983, lon: 48.5148 },
-            { name: 'یزد', capital: 'یزد', lat: 31.8974, lon: 54.3569 }
-        ];
-        const provinceFrom = document.getElementById('provinceFrom');
-        const provinceTo = document.getElementById('provinceTo');
-        provinces.forEach(p => {
-            provinceFrom.appendChild(new Option(`${p.name} - ${p.capital}`, p.name));
-            provinceTo.appendChild(new Option(`${p.name} - ${p.capital}`, p.name));
-        });
+        // فاصله شهرها
+        const cityFrom = document.getElementById('provinceFrom');
+        const cityTo = document.getElementById('provinceTo');
+        if (cityFrom && cityTo) {
+            cityFrom.innerHTML = '';
+            cityTo.innerHTML = '';
+            cities.forEach(p => {
+                cityFrom.appendChild(new Option(p.name, p.name));
+                cityTo.appendChild(new Option(p.name, p.name));
+            });
+        }
         document.getElementById('distanceCalcBtn').addEventListener('click', () => {
-            const from = provinces.find(p=>p.name===provinceFrom.value);
-            const to = provinces.find(p=>p.name===provinceTo.value);
-            if(!from||!to) return;
-            const R=6371, dLat=rad(to.lat-from.lat), dLon=rad(to.lon-from.lon);
-            const a=Math.sin(dLat/2)**2+Math.cos(rad(from.lat))*Math.cos(rad(to.lat))*Math.sin(dLon/2)**2;
-            const c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-            document.getElementById('distanceResult').textContent = `فاصله مستقیم: ${(R*c).toFixed(1)} کیلومتر`;
+            const from = cities.find(p => p.name === cityFrom.value);
+            const to = cities.find(p => p.name === cityTo.value);
+            if (!from || !to) return;
+            const R = 6371, dLat = rad(to.lat - from.lat), dLon = rad(to.lon - from.lon);
+            const a = Math.sin(dLat/2)**2 + Math.cos(rad(from.lat)) * Math.cos(rad(to.lat)) * Math.sin(dLon/2)**2;
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            const airDistance = R * c;
+            const groundDistance = airDistance * 1.25;
+            document.getElementById('distanceResult').innerHTML =
+                `✈️ فاصله مستقیم (هوایی): <strong>${airDistance.toFixed(1)}</strong> کیلومتر<br>` +
+                `🚗 فاصله زمینی (تقریبی): <strong>${groundDistance.toFixed(1)}</strong> کیلومتر`;
         });
 
-        // ======================== اقساط وام ========================
+        // اقساط وام
         document.getElementById('loanCalcBtn').addEventListener('click', () => {
             const amount = parseFloat(document.getElementById('loanAmount').value);
             const rate = parseFloat(document.getElementById('loanRate').value);
             const months = parseInt(document.getElementById('loanMonths').value);
             const resultEl = document.getElementById('loanResult');
-
-            if (!amount || isNaN(amount) || amount <= 0) {
-                resultEl.textContent = 'لطفاً مبلغ وام را به درستی وارد کنید';
-                return;
-            }
-            if (isNaN(rate) || rate < 0) {
-                resultEl.textContent = 'لطفاً نرخ سود سالانه را وارد کنید (صفر مجاز است)';
-                return;
-            }
-            if (!months || isNaN(months) || months <= 0) {
-                resultEl.textContent = 'لطفاً مدت بازپرداخت را به ماه وارد کنید';
-                return;
-            }
-
+            if (!amount || isNaN(amount) || amount <= 0) { resultEl.textContent = 'لطفاً مبلغ وام را به درستی وارد کنید'; return; }
+            if (isNaN(rate) || rate < 0) { resultEl.textContent = 'لطفاً نرخ سود سالانه را وارد کنید (صفر مجاز است)'; return; }
+            if (!months || isNaN(months) || months <= 0) { resultEl.textContent = 'لطفاً مدت بازپرداخت را به ماه وارد کنید'; return; }
             let payment, total, totalInterest;
-            if (rate === 0) {
-                payment = amount / months;
-                total = amount;
-                totalInterest = 0;
-            } else {
+            if (rate === 0) { payment = amount / months; total = amount; totalInterest = 0; }
+            else {
                 const mr = rate / 12 / 100;
                 payment = amount * mr / (1 - Math.pow(1 + mr, -months));
                 total = payment * months;
                 totalInterest = total - amount;
             }
-
             resultEl.innerHTML =
                 `💵 قسط ماهانه: <strong>${formatNum(payment)} تومان</strong><br>` +
                 `📊 کل بازپرداخت: ${formatNum(total)} تومان<br>` +
                 `📈 سود کل: ${formatNum(totalInterest)} تومان`;
         });
 
-        // ======================== سود سپرده ========================
+        // سود سپرده
         document.getElementById('depositCalcBtn').addEventListener('click', () => {
             const amount = parseFloat(document.getElementById('depositAmount').value);
             const rate = parseFloat(document.getElementById('depositRate').value);
             const months = parseInt(document.getElementById('depositMonths').value);
             const resultEl = document.getElementById('depositResult');
-
-            if (!amount || isNaN(amount) || amount <= 0) {
-                resultEl.textContent = 'لطفاً مبلغ سپرده را به درستی وارد کنید';
-                return;
-            }
-            if (isNaN(rate) || rate < 0) {
-                resultEl.textContent = 'لطفاً نرخ سود سالانه را وارد کنید';
-                return;
-            }
-            if (!months || isNaN(months) || months <= 0) {
-                resultEl.textContent = 'لطفاً مدت سپرده‌گذاری را به ماه وارد کنید';
-                return;
-            }
-
+            if (!amount || isNaN(amount) || amount <= 0) { resultEl.textContent = 'لطفاً مبلغ سپرده را به درستی وارد کنید'; return; }
+            if (isNaN(rate) || rate < 0) { resultEl.textContent = 'لطفاً نرخ سود سالانه را وارد کنید'; return; }
+            if (!months || isNaN(months) || months <= 0) { resultEl.textContent = 'لطفاً مدت سپرده‌گذاری را به ماه وارد کنید'; return; }
             const interest = amount * rate / 100 * (months / 12);
             const monthlyInterest = interest / months;
             const finalAmount = amount + interest;
-
             resultEl.innerHTML =
                 `💰 سود کل: <strong>${formatNum(interest)} تومان</strong><br>` +
                 `📅 سود ماهانه: ${formatNum(monthlyInterest)} تومان<br>` +
                 `💵 مبلغ نهایی: ${formatNum(finalAmount)} تومان`;
         });
 
-        // ======================== سن دقیق ========================
+        // سن دقیق
         document.getElementById('ageCalcBtn').addEventListener('click', () => {
             const by = parseInt(document.getElementById('birthShYear').value);
             const bm = parseInt(document.getElementById('birthShMonth').value);
             const bd = parseInt(document.getElementById('birthShDay').value);
             const resultEl = document.getElementById('ageResult');
-
             if (!by || !bm || !bd || bm < 1 || bm > 12 || bd < 1 || bd > 31) {
                 resultEl.textContent = 'لطفاً تاریخ تولد شمسی را به درستی وارد کنید';
                 return;
             }
-
             const maxDay = bm <= 6 ? 31 : bm <= 11 ? 30 : (isShamsiLeap(by) ? 30 : 29);
-            if (bd > maxDay) {
-                resultEl.textContent = `روز وارد شده برای این ماه نامعتبر است (حداکثر ${maxDay})`;
-                return;
-            }
-
+            if (bd > maxDay) { resultEl.textContent = `روز وارد شده برای این ماه نامعتبر است (حداکثر ${maxDay})`; return; }
             const birthJD = shamsiToJD(by, bm, bd);
             const iran = getIranDateTime();
             const todayJD = gregorianToJD(iran.year, iran.month, iran.day);
-
-            if (birthJD > todayJD) {
-                resultEl.textContent = 'تاریخ تولد نمی‌تواند بعد از امروز باشد';
-                return;
-            }
-
-            const shBirth = { year: by, month: bm, day: bd };
+            if (birthJD > todayJD) { resultEl.textContent = 'تاریخ تولد نمی‌تواند بعد از امروز باشد'; return; }
             const shNow = gregorianToShamsi(iran.year, iran.month, iran.day);
-
-            let shYears = shNow.year - shBirth.year;
-            let shMonths = shNow.month - shBirth.month;
-            let shDays = shNow.day - shBirth.day;
-
+            let shYears = shNow.year - by;
+            let shMonths = shNow.month - bm;
+            let shDays = shNow.day - bd;
             if (shDays < 0) {
                 shMonths--;
-                let prevMonth = shNow.month - 1;
-                let prevYear = shNow.year;
+                let prevMonth = shNow.month - 1, prevYear = shNow.year;
                 if (prevMonth === 0) { prevMonth = 12; prevYear--; }
                 const prevMonthDays = prevMonth <= 6 ? 31 : prevMonth <= 11 ? 30 : (isShamsiLeap(prevYear) ? 30 : 29);
                 shDays += prevMonthDays;
             }
-            if (shMonths < 0) {
-                shYears--;
-                shMonths += 12;
-            }
-
+            if (shMonths < 0) { shYears--; shMonths += 12; }
             const birthGreg = jdToGregorian(birthJD);
             const nowGreg = { year: iran.year, month: iran.month, day: iran.day };
-
             let milYears = nowGreg.year - birthGreg.year;
             let milMonths = nowGreg.month - birthGreg.month;
             let milDays = nowGreg.day - birthGreg.day;
-
             if (milDays < 0) {
                 milMonths--;
-                let prevMonth = nowGreg.month - 1;
-                let prevYear = nowGreg.year;
+                let prevMonth = nowGreg.month - 1, prevYear = nowGreg.year;
                 if (prevMonth === 0) { prevMonth = 12; prevYear--; }
                 const daysInPrevMonth = new Date(prevYear, prevMonth, 0).getDate();
                 milDays += daysInPrevMonth;
             }
-            if (milMonths < 0) {
-                milYears--;
-                milMonths += 12;
-            }
-
+            if (milMonths < 0) { milYears--; milMonths += 12; }
             resultEl.innerHTML =
                 `🎂 سن شمسی دقیق:<br>` +
                 `<strong>${shYears} سال، ${shMonths} ماه، ${shDays} روز</strong><br>` +
@@ -1232,13 +1154,9 @@
 
     // ======================== لینک‌های فوتر و لوگو ========================
     const siteLogo = document.getElementById('siteLogo');
-    if (siteLogo) {
-        siteLogo.addEventListener('click', () => { location.href = 'index.html'; });
-    }
+    if (siteLogo) { siteLogo.addEventListener('click', () => { location.href = 'index.html'; }); }
     const contactLink = document.getElementById('contactLink');
-    if (contactLink) {
-        contactLink.addEventListener('click', (e) => { e.preventDefault(); location.href = 'contact.html'; });
-    }
+    if (contactLink) { contactLink.addEventListener('click', (e) => { e.preventDefault(); location.href = 'contact.html'; }); }
 
     // ======================== تنظیم سال فوتر ========================
     const footerYear = document.getElementById('footerYear');
